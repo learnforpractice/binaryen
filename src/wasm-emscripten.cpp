@@ -457,7 +457,7 @@ struct EmJsWalker : public PostWalker<EmJsWalker> {
   Module& wasm;
   std::vector<Address> segmentOffsets; // segment index => address offset
 
-  std::vector<std::string> foundCode;
+  std::map<std::string, std::string> codeByName;
 
   EmJsWalker(Module& _wasm)
     : wasm(_wasm),
@@ -467,12 +467,13 @@ struct EmJsWalker : public PostWalker<EmJsWalker> {
     if (!curr->name.startsWith(EM_JS_PREFIX.str)) {
       return;
     }
+    auto funcName = std::string(curr->name.stripPrefix(EM_JS_PREFIX.str));
     Const* addrConst = curr->body->dynCast<Const>();
     if (addrConst == nullptr) {
       addrConst = curr->body->cast<Block>()->list[0]->cast<Const>();
     }
     auto code = codeForConstAddr(wasm, segmentOffsets, addrConst);
-    foundCode.push_back(code);
+    codeByName[funcName] = code;
   }
 };
 
@@ -538,14 +539,16 @@ std::string EmscriptenGlueGenerator::generateEmscriptenMetadata(
   }
   meta << "},";
 
-  meta << "\"emJsFuncs\": [";
+  meta << "\"emJsFuncs\": {";
   first = true;
-  for (auto& code : jsWalker.foundCode) {
+  for (auto& pair : jsWalker.codeByName) {
+    auto& name = pair.first;
+    auto& code = pair.second;
     if (first) first = false;
     else meta << ",";
-    meta << '"' << code << '"';
+    meta << '"' << name << "\": \"" << code << '"';
   }
-  meta << "],";
+  meta << "},";
 
   meta << "\"staticBump\": " << staticBump << ", ";
 
