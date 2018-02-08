@@ -523,7 +523,7 @@ std::string EmscriptenGlueGenerator::generateEmscriptenMetadata(
   meta << "{ ";
 
   AsmConstWalker emAsmWalker = fixEmAsmConstsAndReturnWalker(wasm);
-  EmJsWalker jsWalker = fixEmJsFuncsAndReturnWalker(wasm);
+  EmJsWalker emJsWalker = fixEmJsFuncsAndReturnWalker(wasm);
 
   // print
   meta << "\"asmConsts\": {";
@@ -539,16 +539,18 @@ std::string EmscriptenGlueGenerator::generateEmscriptenMetadata(
   }
   meta << "},";
 
-  meta << "\"emJsFuncs\": {";
-  first = true;
-  for (auto& pair : jsWalker.codeByName) {
-    auto& name = pair.first;
-    auto& code = pair.second;
-    if (first) first = false;
-    else meta << ",";
-    meta << '"' << name << "\": \"" << code << '"';
+  if (emJsWalker.codeByName.size() > 0) {
+    meta << "\"emJsFuncs\": {";
+    first = true;
+    for (auto& pair : emJsWalker.codeByName) {
+      auto& name = pair.first;
+      auto& code = pair.second;
+      if (first) first = false;
+      else meta << ",";
+      meta << '"' << name << "\": \"" << code << '"';
+    }
+    meta << "},";
   }
-  meta << "},";
 
   meta << "\"staticBump\": " << staticBump << ", ";
 
