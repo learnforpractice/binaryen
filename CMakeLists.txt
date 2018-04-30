@@ -2,7 +2,7 @@ PROJECT(binaryen C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.7)
 INCLUDE(GNUInstallDirs)
 
-set(BUILD_STATIC_LIB ON)
+set(BUILD_STATIC_LIB OFF)
 
 # Support functionality.
 
@@ -187,6 +187,8 @@ ELSE()
   ADD_LIBRARY(binaryen SHARED ${binaryen_SOURCES})
 ENDIF()
 
+TARGET_LINK_LIBRARIES(binaryen passes wasm asmjs ast cfg support emscripten-optimizer)
+
 SET(s2wasm_SOURCES
   src/tools/s2wasm.cpp
   src/wasm-emscripten.cpp
@@ -194,7 +196,7 @@ SET(s2wasm_SOURCES
 )
 ADD_EXECUTABLE(eosio-s2wasm
                ${s2wasm_SOURCES})
-TARGET_LINK_LIBRARIES(eosio-s2wasm passes wasm asmjs ast cfg support)
+TARGET_LINK_LIBRARIES(eosio-s2wasm binaryen)
 SET_PROPERTY(TARGET eosio-s2wasm PROPERTY CXX_STANDARD 11)
 SET_PROPERTY(TARGET eosio-s2wasm PROPERTY CXX_STANDARD_REQUIRED ON)
 INSTALL(TARGETS eosio-s2wasm DESTINATION ${CMAKE_INSTALL_BINDIR})
