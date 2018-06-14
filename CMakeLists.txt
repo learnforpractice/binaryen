@@ -2,7 +2,7 @@ PROJECT(binaryen C CXX)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.7)
 INCLUDE(GNUInstallDirs)
 
-set(BUILD_STATIC_LIB OFF)
+set(BUILD_STATIC_LIB ON)
 
 # Support functionality.
 
