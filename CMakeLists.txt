@@ -181,7 +181,7 @@ ADD_SUBDIRECTORY(src/wasm)
 SET(binaryen_SOURCES
   src/binaryen-c.cpp
   src/wasm/wasm.cpp
-  src/passes/Pass.cpp
+  src/passes/pass.cpp
   src/passes/Print.cpp
   src/wasm/wasm-type.cpp
   src/wasm/wasm-binary.cpp
