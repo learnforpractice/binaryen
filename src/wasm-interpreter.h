@@ -36,6 +36,8 @@
 #include "wasm-printing.h"
 #endif
 
+#define UNUSED(x) (void)(x)
+
 
 namespace wasm {
 
@@ -455,10 +457,12 @@ public:
     return flow;
   }
   Flow visitNop(Nop *curr) {
+    UNUSED(curr);
     NOTE_ENTER("Nop");
     return Flow();
   }
   Flow visitUnreachable(Unreachable *curr) {
+    UNUSED(curr);
     NOTE_ENTER("Unreachable");
     trap("unreachable");
     return Flow();
@@ -506,6 +510,7 @@ public:
 
   virtual void trap(const char* why) {
     WASM_UNREACHABLE();
+    UNUSED(why);
   }
 };
 
@@ -516,17 +521,17 @@ class ConstantExpressionRunner : public ExpressionRunner<ConstantExpressionRunne
 public:
   ConstantExpressionRunner(GlobalManager& globals) : globals(globals) {}
 
-  Flow visitLoop(Loop* curr) { WASM_UNREACHABLE(); }
-  Flow visitCall(Call* curr) { WASM_UNREACHABLE(); }
-  Flow visitCallImport(CallImport* curr) { WASM_UNREACHABLE(); }
-  Flow visitCallIndirect(CallIndirect* curr) { WASM_UNREACHABLE(); }
-  Flow visitGetLocal(GetLocal *curr) { WASM_UNREACHABLE(); }
-  Flow visitSetLocal(SetLocal *curr) { WASM_UNREACHABLE(); }
+  Flow visitLoop(Loop* curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitCall(Call* curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitCallImport(CallImport* curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitCallIndirect(CallIndirect* curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitGetLocal(GetLocal *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitSetLocal(SetLocal *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
   Flow visitGetGlobal(GetGlobal *curr) { return Flow(globals[curr->name]); }
-  Flow visitSetGlobal(SetGlobal *curr) { WASM_UNREACHABLE(); }
-  Flow visitLoad(Load *curr) { WASM_UNREACHABLE(); }
-  Flow visitStore(Store *curr) { WASM_UNREACHABLE(); }
-  Flow visitHost(Host *curr) { WASM_UNREACHABLE(); }
+  Flow visitSetGlobal(SetGlobal *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitLoad(Load *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitStore(Store *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
+  Flow visitHost(Host *curr) { WASM_UNREACHABLE(); UNUSED(curr);}
 };
 
 //
@@ -548,7 +553,7 @@ public:
   // an imported function or accessing memory.
   //
   struct ExternalInterface {
-    virtual void init(Module& wasm, SubType& instance) {}
+    virtual void init(Module& wasm, SubType& instance) {UNUSED(wasm);UNUSED(instance);}
     virtual void importGlobals(GlobalManager& globals, Module& wasm) = 0;
     virtual Literal callImport(Import* import, LiteralList& arguments) = 0;
     virtual Literal callTable(Index index, LiteralList& arguments, WasmType result, SubType& instance) = 0;
@@ -611,19 +616,19 @@ public:
       }
     }
 
-    virtual int8_t load8s(Address addr) { WASM_UNREACHABLE(); }
-    virtual uint8_t load8u(Address addr) { WASM_UNREACHABLE(); }
-    virtual int16_t load16s(Address addr) { WASM_UNREACHABLE(); }
-    virtual uint16_t load16u(Address addr) { WASM_UNREACHABLE(); }
-    virtual int32_t load32s(Address addr) { WASM_UNREACHABLE(); }
-    virtual uint32_t load32u(Address addr) { WASM_UNREACHABLE(); }
-    virtual int64_t load64s(Address addr) { WASM_UNREACHABLE(); }
-    virtual uint64_t load64u(Address addr) { WASM_UNREACHABLE(); }
+    virtual int8_t load8s(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual uint8_t load8u(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual int16_t load16s(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual uint16_t load16u(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual int32_t load32s(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual uint32_t load32u(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual int64_t load64s(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
+    virtual uint64_t load64u(Address addr) { WASM_UNREACHABLE(); UNUSED(addr);}
 
-    virtual void store8(Address addr, int8_t value) { WASM_UNREACHABLE(); }
-    virtual void store16(Address addr, int16_t value) { WASM_UNREACHABLE(); }
-    virtual void store32(Address addr, int32_t value) { WASM_UNREACHABLE(); }
-    virtual void store64(Address addr, int64_t value) { WASM_UNREACHABLE(); }
+    virtual void store8(Address addr, int8_t value) { WASM_UNREACHABLE(); UNUSED(addr);UNUSED(value);}
+    virtual void store16(Address addr, int16_t value) { WASM_UNREACHABLE(); UNUSED(addr);UNUSED(value);}
+    virtual void store32(Address addr, int32_t value) { WASM_UNREACHABLE(); UNUSED(addr);UNUSED(value);}
+    virtual void store64(Address addr, int64_t value) { WASM_UNREACHABLE(); UNUSED(addr);UNUSED(value);}
   };
 
   SubType* self() {

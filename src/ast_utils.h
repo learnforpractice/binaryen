@@ -23,6 +23,8 @@
 #include "pass.h"
 #include "ast/branch-utils.h"
 
+#define UNUSED(x) (void)(x)
+
 namespace wasm {
 
 // Finds if there are breaks targeting a name. Note that since names are
@@ -197,7 +199,7 @@ struct EffectAnalyzer : public PostWalker<EffectAnalyzer> {
     if (curr->name.is()) breakNames.erase(curr->name); // these were internal breaks
   }
 
-  void visitCall(Call *curr) { calls = true; }
+  void visitCall(Call *curr) { calls = true; UNUSED(curr);}
   void visitCallImport(CallImport *curr) {
     calls = true;
     if (debugInfo) {
@@ -206,29 +208,35 @@ struct EffectAnalyzer : public PostWalker<EffectAnalyzer> {
       branches = true; // !
     }
   }
-  void visitCallIndirect(CallIndirect *curr) { calls = true; }
+  void visitCallIndirect(CallIndirect *curr) { calls = true; UNUSED(curr);}
   void visitGetLocal(GetLocal *curr) {
     localsRead.insert(curr->index);
   }
   void visitSetLocal(SetLocal *curr) {
-    localsWritten.insert(curr->index);
+     UNUSED(curr);
+     localsWritten.insert(curr->index);
   }
   void visitGetGlobal(GetGlobal *curr) {
+    UNUSED(curr);
     globalsRead.insert(curr->name);
   }
   void visitSetGlobal(SetGlobal *curr) {
-    globalsWritten.insert(curr->name);
+     UNUSED(curr);
+     globalsWritten.insert(curr->name);
   }
   void visitLoad(Load *curr) {
-    readsMemory = true;
+     UNUSED(curr);
+     readsMemory = true;
     if (!ignoreImplicitTraps) implicitTrap = true;
   }
   void visitStore(Store *curr) {
-    writesMemory = true;
+     UNUSED(curr);
+     writesMemory = true;
     if (!ignoreImplicitTraps) implicitTrap = true;
   }
   void visitUnary(Unary *curr) {
-    if (!ignoreImplicitTraps) {
+     UNUSED(curr);
+     if (!ignoreImplicitTraps) {
       switch (curr->op) {
         case TruncSFloat32ToInt32:
         case TruncSFloat32ToInt64:
@@ -261,9 +269,9 @@ struct EffectAnalyzer : public PostWalker<EffectAnalyzer> {
       }
     }
   }
-  void visitReturn(Return *curr) { branches = true; }
-  void visitHost(Host *curr) { calls = true; }
-  void visitUnreachable(Unreachable *curr) { branches = true; }
+  void visitReturn(Return *curr) { branches = true; UNUSED(curr);}
+  void visitHost(Host *curr) { calls = true; UNUSED(curr);}
+  void visitUnreachable(Unreachable *curr) { branches = true; UNUSED(curr);}
 };
 
 // Measure the size of an AST
@@ -272,6 +280,7 @@ struct Measurer : public PostWalker<Measurer, UnifiedExpressionVisitor<Measurer>
   Index size = 0;
 
   void visitExpression(Expression* curr) {
+    UNUSED(curr);
     size++;
   }
 
@@ -313,6 +322,8 @@ struct ExpressionAnalyzer {
 
   static bool equal(Expression* left, Expression* right) {
     auto comparer = [](Expression* left, Expression* right) {
+       UNUSED(left);
+       UNUSED(right);
       return false;
     };
     return flexibleEqual(left, right, comparer);
